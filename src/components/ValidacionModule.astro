@@ -1,0 +1,186 @@
+---
+/**
+ * ValidacionModule.astro
+ * Dashboard-style validation module showcasing metrics, brand logos,
+ * and executive testimonials. Demonstrates Diana's track record.
+ *
+ * Layout:
+ * - Mobile (base): Single column, metrics stacked vertically
+ * - Desktop (>=769px): Metrics in horizontal grid row, lime accents, dark background
+ */
+import MetricCard from './MetricCard.astro';
+import TestimonialCard from './TestimonialCard.astro';
+---
+
+<section class="validacion-module" aria-labelledby="validacion-heading">
+  <h2 id="validacion-heading" class="sr-only">Validación</h2>
+
+  <!-- Metrics Dashboard -->
+  <div class="metrics-grid">
+    <MetricCard value="+300%" labelKey="val.metric1.label" />
+    <MetricCard value="47" labelKey="val.metric2.label" />
+    <MetricCard value="12x" labelKey="val.metric3.label" />
+  </div>
+
+  <!-- Brand Logos -->
+  <div class="brand-logos" aria-label="Brands we've worked with">
+    <picture>
+      <source srcset="/images/brand-techlatam.webp" type="image/webp" />
+      <img
+        src="/images/brand-techlatam.png"
+        alt="TechLatam Corp"
+        loading="lazy"
+        data-brand-name="TechLatam Corp"
+      />
+    </picture>
+    <picture>
+      <source srcset="/images/brand-scaleup.webp" type="image/webp" />
+      <img
+        src="/images/brand-scaleup.png"
+        alt="ScaleUp Ventures"
+        loading="lazy"
+        data-brand-name="ScaleUp Ventures"
+      />
+    </picture>
+    <picture>
+      <source srcset="/images/brand-global.webp" type="image/webp" />
+      <img
+        src="/images/brand-global.png"
+        alt="Global Brands Inc"
+        loading="lazy"
+        data-brand-name="Global Brands Inc"
+      />
+    </picture>
+    <picture>
+      <source srcset="/images/brand-nexo.webp" type="image/webp" />
+      <img
+        src="/images/brand-nexo.png"
+        alt="Nexo Digital"
+        loading="lazy"
+        data-brand-name="Nexo Digital"
+      />
+    </picture>
+  </div>
+
+  <!-- Testimonials -->
+  <div class="testimonials-grid">
+    <TestimonialCard
+      quoteKey="val.testimonial1.quote"
+      author="María González"
+      role="CEO"
+      company="TechLatam Corp"
+    />
+    <TestimonialCard
+      quoteKey="val.testimonial2.quote"
+      author="Carlos Méndez"
+      role="COO"
+      company="ScaleUp Ventures"
+    />
+    <TestimonialCard
+      quoteKey="val.testimonial3.quote"
+      author="Ana Ruiz"
+      role="CFO"
+      company="Global Brands Inc"
+    />
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll('.brand-logos picture img').forEach((img) => {
+    img.addEventListener('error', () => {
+      const brandName = img.getAttribute('data-brand-name') || 'Brand';
+      const span = document.createElement('span');
+      span.textContent = brandName;
+      span.className = 'brand-logo-fallback';
+      span.style.height = '40px';
+      span.style.display = 'inline-flex';
+      span.style.alignItems = 'center';
+      span.style.color = 'var(--diana-text-muted)';
+      span.style.fontFamily = 'var(--diana-font-body)';
+      span.style.fontSize = '0.875rem';
+      span.style.fontWeight = '500';
+      span.style.letterSpacing = '0.02em';
+      const picture = img.closest('picture');
+      if (picture) {
+        picture.replaceWith(span);
+      } else {
+        img.replaceWith(span);
+      }
+    });
+  });
+</script>
+
+<style>
+  .validacion-module {
+    background: var(--diana-bg);
+    padding: var(--diana-space-xl) var(--diana-space-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--diana-space-xl);
+    max-width: var(--diana-max-width);
+    margin: 0 auto;
+  }
+
+  /* Metrics Grid — Mobile: stacked column */
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--diana-space-md);
+  }
+
+  /* Brand Logos Row */
+  .brand-logos {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: var(--diana-space-lg);
+    padding: var(--diana-space-lg) 0;
+  }
+
+  .brand-logos img {
+    height: 40px;
+    width: auto;
+    opacity: 0.7;
+    transition: opacity var(--diana-transition-normal);
+    filter: grayscale(100%) brightness(1.5);
+  }
+
+  .brand-logos img:hover,
+  .brand-logos picture:hover img {
+    opacity: 1;
+  }
+
+  /* Testimonials Grid — Mobile: stacked */
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--diana-space-md);
+  }
+
+  /* Desktop (>=769px): Metrics in horizontal grid, dashboard style */
+  @media (min-width: 769px) {
+    .metrics-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--diana-space-lg);
+      background: var(--diana-surface);
+      border-radius: 16px;
+      padding: var(--diana-space-lg);
+      border: 1px solid var(--diana-accent-lime);
+      box-shadow: 0 0 24px rgba(204, 255, 0, 0.05);
+    }
+
+    .testimonials-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--diana-space-lg);
+    }
+
+    .brand-logos img {
+      height: 48px;
+    }
+
+    .brand-logos :global(.brand-logo-fallback) {
+      height: 48px !important;
+    }
+  }
+</style>

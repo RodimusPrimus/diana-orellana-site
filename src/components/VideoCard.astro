@@ -1,0 +1,145 @@
+---
+/**
+ * VideoCard.astro
+ * Displays a video thumbnail with play button overlay, title, duration, and topic.
+ * Used in the Contenido module. Clicking opens the VideoModal (logic in Task 9.5).
+ */
+interface Props {
+  thumbnail: string;
+  title: string;
+  duration: string;
+  topic: string;
+  videoUrl: string;
+}
+
+const { thumbnail, title, duration, topic, videoUrl } = Astro.props;
+---
+
+<button class="video-card" data-video-url={videoUrl} type="button" aria-label={`Play video: ${title}`}>
+  <div class="video-card__thumbnail-wrapper">
+    <img
+      class="video-card__thumbnail"
+      src={thumbnail}
+      alt={`Thumbnail for ${title}`}
+      loading="lazy"
+    />
+    <span class="video-card__play-btn" aria-hidden="true">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M8 5.14v13.72a1 1 0 0 0 1.5.86l11.04-6.86a1 1 0 0 0 0-1.72L9.5 4.28a1 1 0 0 0-1.5.86Z" fill="currentColor"/>
+      </svg>
+    </span>
+  </div>
+  <div class="video-card__info">
+    <h3 class="video-card__title">{title}</h3>
+    <div class="video-card__meta">
+      <span class="video-card__duration">{duration}</span>
+      <span class="video-card__topic">{topic}</span>
+    </div>
+  </div>
+</button>
+
+<style>
+  .video-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--diana-surface);
+    border-radius: 12px;
+    overflow: hidden;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    text-align: left;
+    color: var(--diana-text);
+    font-family: var(--diana-font-body);
+    width: 100%;
+    min-width: 44px;
+    min-height: 44px;
+    transition: transform var(--diana-transition-normal), filter var(--diana-transition-normal);
+  }
+
+  .video-card:hover {
+    transform: scale(1.02);
+    filter: brightness(1.1);
+  }
+
+  .video-card:focus-visible {
+    outline: 2px solid var(--diana-accent-lime);
+    outline-offset: 2px;
+  }
+
+  .video-card__thumbnail-wrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+  }
+
+  .video-card__thumbnail {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .video-card__play-btn {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    min-width: 44px;
+    min-height: 44px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.6);
+    color: var(--diana-text);
+    transition: background var(--diana-transition-fast);
+  }
+
+  .video-card:hover .video-card__play-btn {
+    background: rgba(0, 0, 0, 0.8);
+  }
+
+  .video-card__info {
+    padding: var(--diana-space-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--diana-space-sm);
+  }
+
+  .video-card__title {
+    font-family: var(--diana-font-body);
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--diana-text);
+    line-height: 1.4;
+    margin: 0;
+  }
+
+  .video-card__meta {
+    display: flex;
+    align-items: center;
+    gap: var(--diana-space-sm);
+    font-size: 0.875rem;
+    color: var(--diana-text-muted);
+  }
+
+  .video-card__duration {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .video-card__topic {
+    position: relative;
+    padding-left: var(--diana-space-sm);
+  }
+
+  .video-card__topic::before {
+    content: "·";
+    position: absolute;
+    left: 0;
+    color: var(--diana-text-muted);
+  }
+</style>

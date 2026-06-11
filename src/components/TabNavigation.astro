@@ -1,0 +1,293 @@
+---
+/**
+ * TabNavigation.astro
+ * WAI-ARIA tablist navigation component for the Diana Orellana brand site.
+ * Provides 4 tab buttons (Hero, Diagnóstico, Validación, Contenido)
+ * with proper ARIA attributes, SVG icons, and responsive layout.
+ */
+---
+
+<nav class="tab-navigation">
+  <div role="tablist" aria-label="Secciones del sitio">
+    <button
+      role="tab"
+      id="tab-hero"
+      aria-selected="true"
+      aria-controls="panel-hero"
+      tabindex="0"
+      data-i18n="tab.hero"
+    >
+      <svg class="tab-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+        <polyline points="9 22 9 12 15 12 15 22" />
+      </svg>
+      <span class="tab-label">Inicio</span>
+    </button>
+
+    <button
+      role="tab"
+      id="tab-diagnostico"
+      aria-selected="false"
+      aria-controls="panel-diagnostico"
+      tabindex="-1"
+      data-i18n="tab.diagnostico"
+    >
+      <svg class="tab-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M4 7h3a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1z" />
+        <path d="M14 7h3a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-3a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1z" />
+        <path d="M4 16h3a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1z" />
+        <path d="M14 16h3a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-3a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1z" />
+        <path d="M7 9h7" />
+        <path d="M7 18h7" />
+        <path d="M10 7v5" />
+        <path d="M10 16v5" />
+      </svg>
+      <span class="tab-label">Diagnóstico</span>
+    </button>
+
+    <button
+      role="tab"
+      id="tab-validacion"
+      aria-selected="false"
+      aria-controls="panel-validacion"
+      tabindex="-1"
+      data-i18n="tab.validacion"
+    >
+      <svg class="tab-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="3" y="12" width="4" height="9" />
+        <rect x="10" y="7" width="4" height="14" />
+        <rect x="17" y="3" width="4" height="18" />
+      </svg>
+      <span class="tab-label">Resultados</span>
+    </button>
+
+    <button
+      role="tab"
+      id="tab-contenido"
+      aria-selected="false"
+      aria-controls="panel-contenido"
+      tabindex="-1"
+      data-i18n="tab.contenido"
+    >
+      <svg class="tab-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="10" />
+        <polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none" />
+      </svg>
+      <span class="tab-label">Contenido</span>
+    </button>
+  </div>
+</nav>
+
+<style>
+  /* Mobile-first: base styles are the mobile fixed bottom bar */
+  .tab-navigation {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+  }
+
+  [role="tablist"] {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    gap: 0;
+    padding: var(--diana-space-sm) 0;
+    border-top: 1px solid var(--diana-surface);
+    background-color: var(--diana-bg);
+  }
+
+  [role="tab"] {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--diana-space-xs);
+    background: none;
+    border: none;
+    color: var(--diana-text-muted);
+    font-family: var(--diana-font-body);
+    font-size: 0.6875rem;
+    padding: var(--diana-space-xs) var(--diana-space-sm);
+    cursor: pointer;
+    min-height: 44px;
+    min-width: 44px;
+    transition: color var(--diana-transition-fast);
+  }
+
+  [role="tab"][aria-selected="true"] {
+    color: var(--diana-accent-lime);
+  }
+
+  [role="tab"]:hover {
+    color: var(--diana-text);
+  }
+
+  .tab-icon {
+    flex-shrink: 0;
+  }
+
+  .tab-label {
+    white-space: nowrap;
+  }
+
+  /* Desktop: horizontal top bar */
+  @media (min-width: 769px) {
+    .tab-navigation {
+      position: relative;
+      bottom: auto;
+      left: auto;
+      right: auto;
+      z-index: 10;
+    }
+
+    [role="tablist"] {
+      justify-content: center;
+      gap: var(--diana-space-md);
+      padding: var(--diana-space-md);
+      border-top: none;
+      border-bottom: 1px solid var(--diana-surface);
+    }
+
+    [role="tab"] {
+      flex-direction: row;
+      gap: var(--diana-space-sm);
+      padding: var(--diana-space-sm) var(--diana-space-md);
+      font-size: 0.875rem;
+      border-bottom: 2px solid transparent;
+      transition: color var(--diana-transition-fast),
+                  border-color var(--diana-transition-fast);
+    }
+
+    [role="tab"][aria-selected="true"] {
+      border-bottom-color: var(--diana-accent-lime);
+    }
+  }
+</style>
+
+<style is:global>
+  [role="tabpanel"] {
+    opacity: 1;
+    transition: opacity 300ms ease;
+  }
+
+  [role="tabpanel"][hidden] {
+    display: none;
+  }
+</style>
+
+<script>
+  /**
+   * Tab Navigation — Client-side behavior
+   * Implements WAI-ARIA tablist pattern with:
+   * - Click-based tab switching with fade transition
+   * - Full keyboard navigation (Arrow keys, Enter, Space, Home, End)
+   * - Active indicator management with lime accent
+   */
+  (function initTabNavigation() {
+    const tablist = document.querySelector('[role="tablist"]');
+    if (!tablist) return;
+
+    const tabs = Array.from(tablist.querySelectorAll<HTMLButtonElement>('[role="tab"]'));
+    if (tabs.length === 0) return;
+
+    const panelIds = ['panel-hero', 'panel-diagnostico', 'panel-validacion', 'panel-contenido'];
+
+    function getPanels(): HTMLElement[] {
+      return panelIds
+        .map((id) => document.getElementById(id))
+        .filter((el): el is HTMLElement => el !== null);
+    }
+
+    function activateTab(targetTab: HTMLButtonElement) {
+      const panels = getPanels();
+
+      // Deactivate all tabs
+      tabs.forEach((tab) => {
+        tab.setAttribute('aria-selected', 'false');
+        tab.setAttribute('tabindex', '-1');
+      });
+
+      // Activate the target tab
+      targetTab.setAttribute('aria-selected', 'true');
+      targetTab.setAttribute('tabindex', '0');
+
+      // Get the target panel ID
+      const targetPanelId = targetTab.getAttribute('aria-controls');
+
+      // Hide all panels, show target with fade
+      panels.forEach((panel) => {
+        if (panel.id === targetPanelId) {
+          // Show the target panel with fade-in
+          panel.removeAttribute('hidden');
+          // Force reflow to trigger transition
+          panel.offsetHeight;
+          panel.style.opacity = '1';
+        } else {
+          panel.style.opacity = '0';
+          panel.setAttribute('hidden', '');
+        }
+      });
+    }
+
+    function focusTab(tab: HTMLButtonElement) {
+      tab.focus();
+    }
+
+    // Click handler for all tabs
+    tabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        activateTab(tab);
+      });
+    });
+
+    // Keyboard navigation on the tablist
+    tablist.addEventListener('keydown', (event) => {
+      const e = event as KeyboardEvent;
+      const currentIndex = tabs.findIndex(
+        (tab) => tab === document.activeElement
+      );
+
+      if (currentIndex === -1) return;
+
+      let targetIndex: number | null = null;
+
+      switch (e.key) {
+        case 'ArrowRight':
+        case 'ArrowDown':
+          e.preventDefault();
+          targetIndex = (currentIndex + 1) % tabs.length;
+          break;
+
+        case 'ArrowLeft':
+        case 'ArrowUp':
+          e.preventDefault();
+          targetIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+          break;
+
+        case 'Home':
+          e.preventDefault();
+          targetIndex = 0;
+          break;
+
+        case 'End':
+          e.preventDefault();
+          targetIndex = tabs.length - 1;
+          break;
+
+        case 'Enter':
+        case ' ':
+          e.preventDefault();
+          activateTab(tabs[currentIndex]);
+          return;
+
+        default:
+          return;
+      }
+
+      if (targetIndex !== null) {
+        focusTab(tabs[targetIndex]);
+      }
+    });
+  })();
+</script>

@@ -1,0 +1,168 @@
+---
+/**
+ * ToggleSelector.astro
+ * Binary toggle for "Multinacionales" / "Scale-ups" profiles.
+ * Implements WAI-ARIA radio group pattern with keyboard operability,
+ * 44×44px touch targets, and custom event dispatching.
+ */
+---
+
+<div class="toggle-selector" role="radiogroup" aria-label="Perfil de cliente">
+  <button
+    class="toggle-option active"
+    role="radio"
+    aria-checked="true"
+    data-profile="multi"
+    data-i18n="toggle.multi"
+    tabindex="0"
+  >
+    Multinacionales
+  </button>
+  <button
+    class="toggle-option"
+    role="radio"
+    aria-checked="false"
+    data-profile="scaleup"
+    data-i18n="toggle.scaleup"
+    tabindex="-1"
+  >
+    Scale-ups
+  </button>
+</div>
+
+<style>
+  .toggle-selector {
+    display: inline-flex;
+    align-items: center;
+    background-color: var(--diana-surface);
+    border-radius: 9999px;
+    padding: 4px;
+    gap: 4px;
+  }
+
+  .toggle-option {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    min-width: 44px;
+    padding: var(--diana-space-sm) var(--diana-space-md);
+    border: none;
+    border-radius: 9999px;
+    background-color: transparent;
+    color: var(--diana-text-muted);
+    font-family: var(--diana-font-body);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 300ms ease, color 300ms ease;
+    white-space: nowrap;
+  }
+
+  .toggle-option.active,
+  .toggle-option[aria-checked="true"] {
+    background-color: var(--diana-accent-lime);
+    color: var(--diana-bg);
+  }
+
+  .toggle-option:hover:not(.active) {
+    color: var(--diana-text);
+  }
+</style>
+
+<script>
+  /**
+   * ToggleSelector — Client-side behavior
+   * Implements WAI-ARIA radio group interaction:
+   * - Click to select an option
+   * - Arrow keys (Left/Right) to move focus between options
+   * - Enter/Space to activate the focused option
+   * - Dispatches 'toggle-change' custom event on the container
+   */
+  (function initToggleSelector() {
+    const container = document.querySelector<HTMLElement>('.toggle-selector');
+    if (!container) return;
+
+    const options = Array.from(
+      container.querySelectorAll<HTMLButtonElement>('.toggle-option')
+    );
+    if (options.length === 0) return;
+
+    function activateOption(option: HTMLButtonElement) {
+      const currentActive = container!.querySelector('[aria-checked="true"]');
+      if (currentActive === option) return;
+
+      // Deactivate all
+      options.forEach((opt) => {
+        opt.setAttribute('aria-checked', 'false');
+        opt.classList.remove('active');
+        opt.setAttribute('tabindex', '-1');
+      });
+
+      // Activate selected
+      option.setAttribute('aria-checked', 'true');
+      option.classList.add('active');
+      option.setAttribute('tabindex', '0');
+
+      // Dispatch custom event
+      const profile = option.getAttribute('data-profile') || '';
+      container!.dispatchEvent(
+        new CustomEvent('toggle-change', {
+          detail: { profile },
+          bubbles: true,
+        })
+      );
+    }
+
+    function focusOption(option: HTMLButtonElement) {
+      option.focus();
+    }
+
+    // Click handlers
+    options.forEach((option) => {
+      option.addEventListener('click', () => {
+        activateOption(option);
+      });
+    });
+
+    // Keyboard navigation
+    container.addEventListener('keydown', (event) => {
+      const e = event as KeyboardEvent;
+      const currentIndex = options.findIndex(
+        (opt) => opt === document.activeElement
+      );
+
+      if (currentIndex === -1) return;
+
+      let targetIndex: number | null = null;
+
+      switch (e.key) {
+        case 'ArrowRight':
+        case 'ArrowDown':
+          e.preventDefault();
+          targetIndex = (currentIndex + 1) % options.length;
+          break;
+
+        case 'ArrowLeft':
+        case 'ArrowUp':
+          e.preventDefault();
+          targetIndex = (currentIndex - 1 + options.length) % options.length;
+          break;
+
+        case 'Enter':
+        case ' ':
+          e.preventDefault();
+          activateOption(options[currentIndex]);
+          return;
+
+        default:
+          return;
+      }
+
+      if (targetIndex !== null) {
+        focusOption(options[targetIndex]);
+      }
+    });
+  })();
+</script>

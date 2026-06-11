@@ -1,0 +1,174 @@
+---
+/**
+ * HeroModule.astro
+ * Hero section with 50/50 layout (text left, photo right) at >=1024px,
+ * stacked layout below. Contains ToggleSelector for profile switching
+ * and dynamic headline/pain points content.
+ */
+import ToggleSelector from './ToggleSelector.astro';
+---
+
+<section class="hero-module">
+  <div class="hero-container">
+    <!-- Left/Top: Text content -->
+    <div class="hero-text">
+      <ToggleSelector />
+
+      <!-- Multinacionales content (visible by default) -->
+      <div class="hero-content-group" data-profile="multi">
+        <h1 class="hero-headline" data-i18n="hero.multi.headline">
+          Your brand isn't keeping up with your growth
+        </h1>
+        <ul class="hero-pain-points">
+          <li data-i18n="hero.multi.pain1">Inconsistent messaging across markets</li>
+          <li data-i18n="hero.multi.pain2">Brand dilution in regional expansions</li>
+          <li data-i18n="hero.multi.pain3">Disconnected teams and fragmented strategy</li>
+        </ul>
+      </div>
+
+      <!-- Scale-ups content (hidden by default) -->
+      <div class="hero-content-group" data-profile="scaleup" hidden>
+        <h1 class="hero-headline" data-i18n="hero.scaleup.headline">
+          Ready to scale, but your brand isn't
+        </h1>
+        <ul class="hero-pain-points">
+          <li data-i18n="hero.scaleup.pain1">No clear positioning against bigger players</li>
+          <li data-i18n="hero.scaleup.pain2">Growth outpacing brand infrastructure</li>
+          <li data-i18n="hero.scaleup.pain3">Investor-ready story missing from your narrative</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Right/Bottom: Photo -->
+    <div class="hero-photo">
+      <img
+        src="/images/diana-orellana.webp"
+        alt="Diana Orellana"
+        loading="eager"
+        class="hero-photo-img"
+      />
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero-module {
+    padding: var(--diana-space-xl) var(--diana-space-md);
+  }
+
+  .hero-container {
+    max-width: var(--diana-max-width);
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--diana-space-lg);
+  }
+
+  /* Text column */
+  .hero-text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--diana-space-lg);
+  }
+
+  .hero-content-group[hidden] {
+    display: none;
+  }
+
+  .hero-headline {
+    font-family: var(--diana-font-heading);
+    font-size: clamp(1.75rem, 5vw, 3rem);
+    line-height: 1.1;
+    color: var(--diana-text);
+    margin-top: var(--diana-space-md);
+  }
+
+  .hero-pain-points {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--diana-space-sm);
+    padding: 0;
+    margin-top: var(--diana-space-md);
+  }
+
+  .hero-pain-points li {
+    color: var(--diana-text-muted);
+    font-family: var(--diana-font-body);
+    font-size: 1rem;
+    line-height: 1.5;
+    padding-left: var(--diana-space-md);
+    position: relative;
+  }
+
+  .hero-pain-points li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--diana-accent-lime);
+  }
+
+  /* Photo column */
+  .hero-photo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hero-photo-img {
+    width: 280px;
+    height: 280px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--diana-accent-lime);
+  }
+
+  /* Desktop: 50/50 side-by-side layout */
+  @media (min-width: 1024px) {
+    .hero-container {
+      flex-direction: row;
+      align-items: center;
+    }
+
+    .hero-text {
+      flex: 1;
+    }
+
+    .hero-photo {
+      flex: 1;
+    }
+
+    .hero-photo-img {
+      width: 360px;
+      height: 360px;
+    }
+  }
+</style>
+
+<script>
+  /**
+   * HeroModule — Profile content switching
+   * Listens for 'toggle-change' events dispatched by ToggleSelector
+   * and toggles visibility of content groups using the hidden attribute.
+   * Default visible profile on page load: "multi".
+   */
+  (function initHeroProfileSwitch() {
+    const heroModule = document.querySelector<HTMLElement>('.hero-module');
+    if (!heroModule) return;
+
+    const contentGroups = heroModule.querySelectorAll<HTMLElement>('[data-profile]');
+    if (contentGroups.length === 0) return;
+
+    heroModule.addEventListener('toggle-change', ((event: CustomEvent<{ profile: string }>) => {
+      const newProfile = event.detail.profile;
+
+      contentGroups.forEach((group) => {
+        if (group.getAttribute('data-profile') === newProfile) {
+          group.removeAttribute('hidden');
+        } else {
+          group.setAttribute('hidden', '');
+        }
+      });
+    }) as EventListener);
+  })();
+</script>

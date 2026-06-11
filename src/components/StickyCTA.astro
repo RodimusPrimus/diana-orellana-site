@@ -1,0 +1,230 @@
+---
+/**
+ * StickyCTA.astro
+ * Sticky CTA button fixed at the bottom of the viewport (above mobile tab bar).
+ * Expands inline to reveal MicroForm on click; close button collapses back.
+ * No script block - interaction logic is handled externally (Task 10.4).
+ */
+import MicroForm from './MicroForm.astro';
+---
+
+<div class="sticky-cta" id="sticky-cta">
+  <!-- CTA Button -->
+  <button
+    class="sticky-cta__button"
+    type="button"
+    data-i18n="cta.button"
+    aria-expanded="false"
+    aria-controls="sticky-cta-form"
+  >
+    Agendar Sesión Estratégica
+  </button>
+
+  <!-- Expandable form area -->
+  <div class="sticky-cta__form-wrapper" id="sticky-cta-form" hidden>
+    <button
+      class="sticky-cta__close"
+      type="button"
+      aria-label="Cerrar formulario"
+    >
+      <span aria-hidden="true">&times;</span>
+      <span class="sr-only">Cerrar</span>
+    </button>
+    <MicroForm />
+  </div>
+</div>
+
+<style>
+  .sticky-cta {
+    position: fixed;
+    bottom: calc(var(--diana-tab-bar-height) + var(--diana-space-sm));
+    left: 0;
+    right: 0;
+    z-index: 50;
+    padding: 0 var(--diana-space-md);
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
+  }
+
+  .sticky-cta__button,
+  .sticky-cta__form-wrapper {
+    pointer-events: auto;
+  }
+
+  .sticky-cta__button {
+    background: var(--diana-accent-lime);
+    color: var(--diana-bg);
+    border: none;
+    border-radius: 9999px;
+    padding: var(--diana-space-sm) var(--diana-space-lg);
+    font-family: var(--diana-font-heading);
+    font-size: 1rem;
+    min-height: 44px;
+    min-width: 44px;
+    cursor: pointer;
+    transition: background-color 300ms ease;
+    white-space: nowrap;
+  }
+
+  .sticky-cta__button:hover {
+    background: var(--diana-accent-orange);
+  }
+
+  .sticky-cta__button[aria-expanded="true"] {
+    display: none;
+  }
+
+  .sticky-cta__form-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    background: var(--diana-surface);
+    border-radius: 12px;
+    padding: var(--diana-space-md);
+  }
+
+  .sticky-cta__form-wrapper[hidden] {
+    display: none;
+  }
+
+  .sticky-cta__close {
+    position: absolute;
+    top: var(--diana-space-sm);
+    right: var(--diana-space-sm);
+    background: transparent;
+    border: none;
+    color: var(--diana-text-muted);
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    min-height: 44px;
+    min-width: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: color var(--diana-transition-fast);
+  }
+
+  .sticky-cta__close:hover {
+    color: var(--diana-text);
+  }
+
+  /* Desktop: position slightly above tab bar, centered */
+  @media (min-width: 768px) {
+    .sticky-cta {
+      bottom: var(--diana-space-lg);
+    }
+  }
+</style>
+
+<script>
+  import { validateMicroForm } from '../utils/formValidation';
+
+  const stickyCta = document.getElementById('sticky-cta');
+  const ctaButton = stickyCta?.querySelector<HTMLButtonElement>('.sticky-cta__button');
+  const formWrapper = stickyCta?.querySelector<HTMLDivElement>('#sticky-cta-form');
+  const closeButton = stickyCta?.querySelector<HTMLButtonElement>('.sticky-cta__close');
+  const microForm = formWrapper?.querySelector<HTMLFormElement>('.micro-form');
+  const confirmation = microForm?.querySelector<HTMLDivElement>('.form-confirmation');
+
+  function expand() {
+    if (!ctaButton || !formWrapper || !microForm) return;
+    ctaButton.setAttribute('aria-expanded', 'true');
+    formWrapper.removeAttribute('hidden');
+    microForm.removeAttribute('hidden');
+  }
+
+  function collapse() {
+    if (!ctaButton || !formWrapper || !microForm) return;
+    ctaButton.setAttribute('aria-expanded', 'false');
+    formWrapper.setAttribute('hidden', '');
+    microForm.setAttribute('hidden', '');
+    // Reset confirmation state so next open shows the form fields
+    resetFormState();
+  }
+
+  function resetFormState() {
+    if (!microForm || !confirmation) return;
+    // Show all form fields and submit button
+    const fields = microForm.querySelectorAll<HTMLDivElement>('.form-field');
+    const submitBtn = microForm.querySelector<HTMLButtonElement>('.form-submit');
+    fields.forEach((field) => field.removeAttribute('hidden'));
+    if (submitBtn) submitBtn.removeAttribute('hidden');
+    // Hide confirmation
+    confirmation.setAttribute('hidden', '');
+    // Reset form values
+    microForm.reset();
+    // Hide all error spans
+    const errors = microForm.querySelectorAll<HTMLSpanElement>('.form-error');
+    errors.forEach((err) => err.setAttribute('hidden', ''));
+  }
+
+  // Expand on CTA button click
+  ctaButton?.addEventListener('click', expand);
+
+  // Collapse on close button click
+  closeButton?.addEventListener('click', collapse);
+
+  // Collapse on click outside the form wrapper
+  document.addEventListener('click', (event) => {
+    if (!stickyCta || !formWrapper) return;
+    const target = event.target as Node;
+    // Only collapse if form is open and click is outside the entire sticky-cta container
+    if (ctaButton?.getAttribute('aria-expanded') === 'true' && !stickyCta.contains(target)) {
+      collapse();
+    }
+  });
+
+  // Form submit handler
+  microForm?.addEventListener('submit', (event) => {
+    event.preventDefault();
+    if (!microForm || !confirmation) return;
+
+    // Collect form data
+    const bottleneckEl = microForm.querySelector<HTMLSelectElement>('#micro-bottleneck');
+    const emailEl = microForm.querySelector<HTMLInputElement>('#micro-email');
+    const linkedinEl = microForm.querySelector<HTMLInputElement>('#micro-linkedin');
+
+    const data = {
+      bottleneck: bottleneckEl?.value ?? '',
+      email: emailEl?.value ?? '',
+      linkedin: linkedinEl?.value ?? '',
+    };
+
+    const result = validateMicroForm(data);
+
+    // Get error spans
+    const bottleneckError = bottleneckEl?.closest('.form-field')?.querySelector<HTMLSpanElement>('.form-error');
+    const emailError = emailEl?.closest('.form-field')?.querySelector<HTMLSpanElement>('.form-error');
+    const linkedinError = linkedinEl?.closest('.form-field')?.querySelector<HTMLSpanElement>('.form-error');
+
+    if (!result.valid) {
+      // Show/hide error spans per field — preserve entered values
+      if (bottleneckError) {
+        result.errors.bottleneck ? bottleneckError.removeAttribute('hidden') : bottleneckError.setAttribute('hidden', '');
+      }
+      if (emailError) {
+        result.errors.email ? emailError.removeAttribute('hidden') : emailError.setAttribute('hidden', '');
+      }
+      if (linkedinError) {
+        result.errors.linkedin ? linkedinError.removeAttribute('hidden') : linkedinError.setAttribute('hidden', '');
+      }
+      return;
+    }
+
+    // Valid: hide all form fields and submit button, show confirmation
+    const fields = microForm.querySelectorAll<HTMLDivElement>('.form-field');
+    const submitBtn = microForm.querySelector<HTMLButtonElement>('.form-submit');
+    fields.forEach((field) => field.setAttribute('hidden', ''));
+    if (submitBtn) submitBtn.setAttribute('hidden', '');
+
+    // Hide any lingering errors
+    const allErrors = microForm.querySelectorAll<HTMLSpanElement>('.form-error');
+    allErrors.forEach((err) => err.setAttribute('hidden', ''));
+
+    // Show confirmation
+    confirmation.removeAttribute('hidden');
+  });
+</script>

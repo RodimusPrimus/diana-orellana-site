@@ -1,0 +1,149 @@
+---
+/**
+ * Carousel.astro
+ * Generic carousel container that wraps slotted child content.
+ * Displays one card at a time with dot indicators and CSS scroll-snap
+ * for touch swipe support. ARIA carousel attributes for accessibility.
+ *
+ * Client-side script handles scroll detection, dot indicator updates, and dot click navigation.
+ */
+interface Props {
+  totalItems: number;
+}
+
+const { totalItems } = Astro.props;
+const dots = Array.from({ length: totalItems }, (_, i) => i);
+---
+
+<div class="carousel" aria-roledescription="carousel" aria-label="Pain points carousel">
+  <div class="carousel__track">
+    <slot />
+  </div>
+  <div class="carousel__indicators" role="tablist" aria-label="Slide indicators">
+    {dots.map((index) => (
+      <button
+        class:list={["carousel__dot", { "carousel__dot--active": index === 0 }]}
+        role="tab"
+        aria-selected={index === 0 ? "true" : "false"}
+        aria-label={`Slide ${index + 1} of ${totalItems}`}
+        data-slide-index={index}
+      />
+    ))}
+  </div>
+</div>
+
+<style>
+  .carousel {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .carousel__track {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .carousel__track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .carousel__track > :global(*) {
+    min-width: 100%;
+    flex-shrink: 0;
+    scroll-snap-align: start;
+  }
+
+  .carousel__indicators {
+    display: flex;
+    justify-content: center;
+    gap: var(--diana-space-sm);
+    padding-top: var(--diana-space-md);
+  }
+
+  .carousel__dot {
+    width: 10px;
+    height: 10px;
+    min-height: 44px;
+    min-width: 44px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: var(--diana-text-muted);
+    cursor: pointer;
+    transition: background var(--diana-transition-fast);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+  }
+
+  .carousel__dot::after {
+    content: '';
+    display: block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--diana-text-muted);
+    transition: background var(--diana-transition-fast);
+  }
+
+  .carousel__dot--active::after {
+    background: var(--diana-accent-lime);
+  }
+</style>
+
+<script>
+  function initCarousel(carousel: HTMLElement): void {
+    const track = carousel.querySelector<HTMLElement>('.carousel__track');
+    const dots = carousel.querySelectorAll<HTMLButtonElement>('.carousel__dot');
+
+    if (!track || dots.length === 0) return;
+
+    function getActiveIndex(): number {
+      const slideWidth = track!.clientWidth;
+      if (slideWidth === 0) return 0;
+      return Math.round(track!.scrollLeft / slideWidth);
+    }
+
+    function updateIndicators(activeIndex: number): void {
+      dots.forEach((dot, i) => {
+        const isActive = i === activeIndex;
+        dot.classList.toggle('carousel__dot--active', isActive);
+        dot.setAttribute('aria-selected', isActive ? 'true' : 'false');
+      });
+    }
+
+    // Use scrollend if supported, otherwise debounce scroll
+    if ('onscrollend' in window) {
+      track.addEventListener('scrollend', () => {
+        updateIndicators(getActiveIndex());
+      });
+    } else {
+      let scrollTimeout: ReturnType<typeof setTimeout>;
+      track.addEventListener('scroll', () => {
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(() => {
+          updateIndicators(getActiveIndex());
+        }, 100);
+      });
+    }
+
+    // Dot click scrolls to corresponding slide
+    dots.forEach((dot) => {
+      dot.addEventListener('click', () => {
+        const index = Number(dot.dataset.slideIndex);
+        const slideWidth = track!.clientWidth;
+        track!.scrollTo({ left: index * slideWidth, behavior: 'smooth' });
+        updateIndicators(index);
+      });
+    });
+  }
+
+  // Initialize all carousel instances on the page
+  document.querySelectorAll<HTMLElement>('.carousel').forEach(initCarousel);
+</script>

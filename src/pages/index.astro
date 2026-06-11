@@ -1,0 +1,44 @@
+---
+import DianaLayout from '../layouts/DianaLayout.astro';
+import TabNavigation from '../components/TabNavigation.astro';
+import HeroModule from '../components/HeroModule.astro';
+import DiagnosticoModule from '../components/DiagnosticoModule.astro';
+import ValidacionModule from '../components/ValidacionModule.astro';
+import ContenidoModule from '../components/ContenidoModule.astro';
+import StickyCTA from '../components/StickyCTA.astro';
+import DianaFooter from '../components/DianaFooter.astro';
+---
+
+<DianaLayout
+  title="Diana Orellana — Brand & Growth Partner"
+  description="Brand & Growth Partner para empresas LATAM. Estrategia de marca, crecimiento y posicionamiento para multinacionales y scale-ups."
+>
+  <!-- Tab Navigation -->
+  <TabNavigation />
+
+  <!-- Tabpanel: Hero -->
+  <div id="panel-hero" role="tabpanel" aria-labelledby="tab-hero">
+    <HeroModule />
+  </div>
+
+  <!-- Tabpanel: Diagnóstico -->
+  <div id="panel-diagnostico" role="tabpanel" aria-labelledby="tab-diagnostico" hidden>
+    <DiagnosticoModule />
+  </div>
+
+  <!-- Tabpanel: Validación -->
+  <div id="panel-validacion" role="tabpanel" aria-labelledby="tab-validacion" hidden>
+    <ValidacionModule />
+  </div>
+
+  <!-- Tabpanel: Contenido -->
+  <div id="panel-contenido" role="tabpanel" aria-labelledby="tab-contenido" hidden>
+    <ContenidoModule />
+  </div>
+
+  <!-- Sticky CTA (always visible, outside tabpanels) -->
+  <StickyCTA />
+
+  <!-- Footer (always visible, outside tabpanels) -->
+  <DianaFooter />
+</DianaLayout>

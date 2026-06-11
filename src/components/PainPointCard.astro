@@ -1,0 +1,48 @@
+---
+/**
+ * PainPointCard.astro
+ * Card displaying a pain point with its corresponding solution.
+ * Features an orange glow hover effect and i18n support via data-i18n attributes.
+ */
+interface Props {
+  painKey: string;
+  solutionKey: string;
+}
+
+const { painKey, solutionKey } = Astro.props;
+---
+
+<article class="pain-point-card">
+  <h3 class="pain-point-title" data-i18n={painKey}>{painKey}</h3>
+  <p class="pain-point-solution" data-i18n={solutionKey}>{solutionKey}</p>
+</article>
+
+<style>
+  .pain-point-card {
+    background: var(--diana-surface);
+    border: 1px solid transparent;
+    border-radius: 12px;
+    padding: var(--diana-space-lg);
+    transition: box-shadow var(--diana-transition-normal), border-color var(--diana-transition-normal);
+  }
+
+  .pain-point-card:hover {
+    box-shadow: 0 0 20px rgba(255, 80, 21, 0.4);
+    border-color: var(--diana-accent-orange);
+  }
+
+  .pain-point-title {
+    font-family: var(--diana-font-heading);
+    font-size: 1.125rem;
+    color: var(--diana-text);
+    line-height: 1.3;
+    margin-bottom: var(--diana-space-sm);
+  }
+
+  .pain-point-solution {
+    font-family: var(--diana-font-body);
+    font-size: 0.95rem;
+    color: var(--diana-text-muted);
+    line-height: 1.5;
+  }
+</style>

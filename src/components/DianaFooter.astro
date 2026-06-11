@@ -1,0 +1,244 @@
+---
+/**
+ * DianaFooter.astro
+ * Mega-typographic footer with contact links and language selector.
+ * Implements Requirements 9.1–9.5
+ */
+---
+
+<footer class="diana-footer" role="contentinfo">
+  <div class="footer-container">
+    <!-- CTA Heading -->
+    <h2 class="footer-heading" data-i18n="footer.cta">Let's talk</h2>
+
+    <!-- Contact Links (mega-typography) -->
+    <div class="footer-contact">
+      <a
+        href="https://wa.me/50259575145"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Chat on WhatsApp"
+        class="footer-link footer-link--whatsapp"
+        data-i18n="footer.whatsapp"
+      >
+        Chat on WhatsApp
+      </a>
+
+      <a
+        href="mailto:Dorellana1786@gmail.com"
+        aria-label="Send an Email"
+        class="footer-link footer-link--email"
+        data-i18n="footer.email"
+      >
+        Send an Email
+      </a>
+    </div>
+
+    <!-- Language Selector -->
+    <div class="footer-lang" role="group" aria-label="Language selector">
+      <button
+        type="button"
+        class="lang-btn"
+        data-lang="en"
+        data-i18n="footer.lang.en"
+      >
+        English
+      </button>
+      <button
+        type="button"
+        class="lang-btn"
+        data-lang="es"
+        data-i18n="footer.lang.es"
+      >
+        Español
+      </button>
+    </div>
+  </div>
+</footer>
+
+<script>
+  import { applyTranslations, persistLanguage, getCurrentLanguage } from '../utils/i18nEngine';
+  import type { Lang } from '../utils/i18nEngine';
+
+  function initFooterLangSelector() {
+    const langButtons = document.querySelectorAll<HTMLButtonElement>('.lang-btn');
+    const currentLang: Lang = getCurrentLanguage();
+
+    // Set initial active state
+    langButtons.forEach((btn) => {
+      const btnLang = btn.getAttribute('data-lang') as Lang;
+      if (btnLang === currentLang) {
+        btn.classList.add('lang-btn--active');
+        btn.setAttribute('aria-pressed', 'true');
+      } else {
+        btn.classList.remove('lang-btn--active');
+        btn.setAttribute('aria-pressed', 'false');
+      }
+    });
+
+    // Handle clicks
+    langButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const selectedLang = btn.getAttribute('data-lang') as Lang;
+        if (!selectedLang) return;
+
+        // Apply translations and persist
+        applyTranslations(selectedLang);
+        persistLanguage(selectedLang);
+
+        // Update active state
+        langButtons.forEach((b) => {
+          const bLang = b.getAttribute('data-lang') as Lang;
+          if (bLang === selectedLang) {
+            b.classList.add('lang-btn--active');
+            b.setAttribute('aria-pressed', 'true');
+          } else {
+            b.classList.remove('lang-btn--active');
+            b.setAttribute('aria-pressed', 'false');
+          }
+        });
+      });
+    });
+  }
+
+  // Initialize when DOM is ready
+  document.addEventListener('astro:page-load', initFooterLangSelector);
+  // Also fire on initial load for non-view-transitions setups
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initFooterLangSelector);
+  } else {
+    initFooterLangSelector();
+  }
+</script>
+
+<style>
+  .diana-footer {
+    background-color: var(--diana-surface);
+    padding: var(--diana-space-xl) var(--diana-space-md);
+    border-top: 1px solid rgba(204, 255, 0, 0.1);
+  }
+
+  .footer-container {
+    max-width: var(--diana-max-width);
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--diana-space-lg);
+    text-align: center;
+  }
+
+  /* 11.1 — Mega-typography heading */
+  .footer-heading {
+    font-family: var(--diana-font-heading);
+    font-size: clamp(2.5rem, 8vw, 5rem);
+    color: var(--diana-text);
+    line-height: 1.1;
+  }
+
+  /* 11.1 — Contact links as dominant design elements (>=60% width, >=2rem) */
+  .footer-contact {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--diana-space-md);
+    width: 100%;
+    min-width: 60%;
+  }
+
+  .footer-link {
+    font-family: var(--diana-font-heading);
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    color: var(--diana-accent-lime);
+    text-decoration: none;
+    padding: var(--diana-space-sm) var(--diana-space-md);
+    min-height: 44px;
+    min-width: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: color var(--diana-transition-normal),
+                background-color var(--diana-transition-normal);
+    width: 100%;
+    max-width: 80%;
+  }
+
+  .footer-link:hover,
+  .footer-link:focus-visible {
+    color: var(--diana-bg);
+    background-color: var(--diana-accent-lime);
+  }
+
+  .footer-link:focus-visible {
+    outline: 2px solid var(--diana-accent-lime);
+    outline-offset: 2px;
+  }
+
+  /* 11.3 — Language selector */
+  .footer-lang {
+    display: flex;
+    gap: var(--diana-space-sm);
+    align-items: center;
+    margin-top: var(--diana-space-md);
+  }
+
+  .lang-btn {
+    font-family: var(--diana-font-body);
+    font-size: 1rem;
+    font-weight: 500;
+    background: transparent;
+    color: var(--diana-text-muted);
+    border: 1px solid var(--diana-text-muted);
+    border-radius: 4px;
+    padding: var(--diana-space-sm) var(--diana-space-md);
+    min-height: 44px;
+    min-width: 44px;
+    cursor: pointer;
+    transition: color var(--diana-transition-fast),
+                border-color var(--diana-transition-fast),
+                background-color var(--diana-transition-fast);
+  }
+
+  .lang-btn:hover {
+    color: var(--diana-text);
+    border-color: var(--diana-text);
+  }
+
+  .lang-btn--active {
+    color: var(--diana-bg);
+    background-color: var(--diana-accent-lime);
+    border-color: var(--diana-accent-lime);
+  }
+
+  .lang-btn--active:hover {
+    color: var(--diana-bg);
+    background-color: var(--diana-accent-lime);
+    border-color: var(--diana-accent-lime);
+  }
+
+  /* Tablet and up */
+  @media (min-width: 768px) {
+    .footer-contact {
+      flex-direction: row;
+      justify-content: center;
+      gap: var(--diana-space-lg);
+    }
+
+    .footer-link {
+      width: auto;
+      max-width: none;
+    }
+  }
+
+  /* Desktop */
+  @media (min-width: 1024px) {
+    .diana-footer {
+      padding: var(--diana-space-xl) var(--diana-space-lg);
+    }
+
+    .footer-heading {
+      font-size: 5rem;
+    }
+  }
+</style>

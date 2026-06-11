@@ -1,0 +1,73 @@
+---
+/**
+ * ArticleCard.astro
+ * Displays an article with title and excerpt preview.
+ * Clicking the card triggers a modal popup to show the full article content.
+ * Modal logic is handled externally (Task 9.5).
+ */
+interface Props {
+  title: string;
+  excerpt: string;
+  content: string;
+}
+
+const { title, excerpt, content } = Astro.props;
+---
+
+<button
+  class="article-card"
+  type="button"
+  data-article-content={content}
+  aria-label={`Read article: ${title}`}
+>
+  <h3 class="article-card__title">{title}</h3>
+  <p class="article-card__excerpt">{excerpt}</p>
+</button>
+
+<style>
+  .article-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--diana-space-sm);
+    background: var(--diana-surface);
+    border: 1px solid transparent;
+    border-radius: 12px;
+    padding: var(--diana-space-lg) var(--diana-space-md);
+    cursor: pointer;
+    text-align: left;
+    color: var(--diana-text);
+    font-family: var(--diana-font-body);
+    width: 100%;
+    min-width: 44px;
+    min-height: 44px;
+    transition:
+      filter var(--diana-transition-normal),
+      border-color var(--diana-transition-normal);
+  }
+
+  .article-card:hover {
+    filter: brightness(1.15);
+    border-color: var(--diana-accent-lime);
+  }
+
+  .article-card:focus-visible {
+    outline: 2px solid var(--diana-accent-lime);
+    outline-offset: 2px;
+  }
+
+  .article-card__title {
+    font-family: var(--diana-font-body);
+    font-size: 1.125rem;
+    font-weight: 500;
+    color: var(--diana-text);
+    line-height: 1.4;
+    margin: 0;
+  }
+
+  .article-card__excerpt {
+    font-size: 0.875rem;
+    color: var(--diana-text-muted);
+    line-height: 1.5;
+    margin: 0;
+  }
+</style>

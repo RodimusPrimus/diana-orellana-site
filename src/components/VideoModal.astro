@@ -1,0 +1,118 @@
+---
+/**
+ * VideoModal.astro
+ * Full-screen overlay modal for embedded video playback.
+ * Initially hidden — opened and populated dynamically via JS (Task 9.5).
+ * Features: focus trap, Escape key close, 10s timeout error state.
+ */
+---
+
+<div id="video-modal" class="video-modal" hidden>
+  <div class="video-modal__overlay" data-video-modal-overlay></div>
+  <div
+    class="video-modal__container"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Video player"
+  >
+    <button
+      class="video-modal__close"
+      type="button"
+      aria-label="Close"
+      data-video-modal-close
+    >
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <div class="video-modal__iframe-container" data-video-modal-iframe-container>
+      <!-- iframe injected dynamically via JS -->
+    </div>
+    <p class="video-modal__error" hidden data-video-modal-error data-i18n="content.video.error">
+      Video could not be loaded. Please try again later.
+    </p>
+  </div>
+</div>
+
+<style>
+  .video-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .video-modal[hidden] {
+    display: none;
+  }
+
+  .video-modal__overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+  }
+
+  .video-modal__container {
+    position: relative;
+    max-width: 800px;
+    width: 90vw;
+    z-index: 1;
+  }
+
+  .video-modal__close {
+    position: absolute;
+    top: calc(-1 * var(--diana-space-lg) - var(--diana-space-sm));
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+    width: 44px;
+    height: 44px;
+    background: none;
+    border: none;
+    color: var(--diana-text);
+    cursor: pointer;
+    border-radius: 4px;
+    transition: color var(--diana-transition-fast);
+  }
+
+  .video-modal__close:hover {
+    color: var(--diana-accent-lime);
+  }
+
+  .video-modal__close:focus-visible {
+    outline: 2px solid var(--diana-accent-lime);
+    outline-offset: 2px;
+  }
+
+  .video-modal__iframe-container {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: var(--diana-surface);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .video-modal__iframe-container :global(iframe) {
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  .video-modal__error {
+    text-align: center;
+    color: var(--diana-text-muted);
+    font-family: var(--diana-font-body);
+    font-size: 0.875rem;
+    margin-top: var(--diana-space-md);
+    padding: var(--diana-space-md);
+  }
+
+  .video-modal__error[hidden] {
+    display: none;
+  }
+</style>

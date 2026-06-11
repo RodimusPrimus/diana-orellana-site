@@ -1,0 +1,65 @@
+---
+/**
+ * DiagnosticoModule.astro
+ * Diagnóstico section composing 4 PainPointCards.
+ * Mobile (≤768px): Cards displayed inside a Carousel for horizontal swipe.
+ * Desktop (≥769px): Cards displayed in a 2-column CSS grid.
+ */
+import PainPointCard from './PainPointCard.astro';
+import Carousel from './Carousel.astro';
+
+const cards = [
+  { painKey: 'diag.pain1.title', solutionKey: 'diag.pain1.solution' },
+  { painKey: 'diag.pain2.title', solutionKey: 'diag.pain2.solution' },
+  { painKey: 'diag.pain3.title', solutionKey: 'diag.pain3.solution' },
+  { painKey: 'diag.pain4.title', solutionKey: 'diag.pain4.solution' },
+];
+---
+
+<section class="diagnostico" aria-labelledby="diagnostico-heading">
+  <h2 id="diagnostico-heading" class="sr-only" data-i18n="tab.diagnostico">Diagnóstico</h2>
+
+  <!-- Desktop: 2-column grid (hidden on mobile) -->
+  <div class="diagnostico-grid">
+    {cards.map((card) => (
+      <PainPointCard painKey={card.painKey} solutionKey={card.solutionKey} />
+    ))}
+  </div>
+
+  <!-- Mobile: Carousel (hidden on desktop) -->
+  <div class="diagnostico-carousel">
+    <Carousel totalItems={4}>
+      {cards.map((card) => (
+        <PainPointCard painKey={card.painKey} solutionKey={card.solutionKey} />
+      ))}
+    </Carousel>
+  </div>
+</section>
+
+<style>
+  .diagnostico {
+    padding: var(--diana-space-xl) var(--diana-space-md);
+  }
+
+  /* Desktop grid: hidden by default (mobile-first), shown at >=769px */
+  .diagnostico-grid {
+    display: none;
+  }
+
+  /* Mobile carousel: shown by default */
+  .diagnostico-carousel {
+    display: block;
+  }
+
+  @media (min-width: 769px) {
+    .diagnostico-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--diana-space-lg);
+    }
+
+    .diagnostico-carousel {
+      display: none;
+    }
+  }
+</style>

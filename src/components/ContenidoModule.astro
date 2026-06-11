@@ -1,0 +1,423 @@
+---
+/**
+ * ContenidoModule.astro
+ * Content Hub module composing VideoCards and ArticleCards.
+ * Includes a single VideoModal instance reused for all video playback.
+ * No script block - modal interaction logic is handled in Task 9.5.
+ */
+import VideoCard from './VideoCard.astro';
+import ArticleCard from './ArticleCard.astro';
+import VideoModal from './VideoModal.astro';
+
+const videos = [
+  {
+    thumbnail: '/images/video-thumb-1.webp',
+    title: 'Cómo escalar tu marca en LATAM',
+    duration: '4:32',
+    topic: 'Brand Strategy',
+    videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+  },
+  {
+    thumbnail: '/images/video-thumb-2.webp',
+    title: 'Growth Loops para Scale-ups',
+    duration: '6:15',
+    topic: 'Growth',
+    videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+  },
+  {
+    thumbnail: '/images/video-thumb-3.webp',
+    title: 'Posicionamiento ejecutivo en LinkedIn',
+    duration: '3:48',
+    topic: 'Personal Branding',
+    videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+  },
+];
+
+const articles = [
+  {
+    title: '5 señales de que tu marca necesita reposicionamiento',
+    excerpt: 'Descubre los indicadores clave que revelan cuándo es momento de repensar tu estrategia de marca.',
+    content: 'El reposicionamiento de marca no es solo un cambio de logo. Es una transformación estratégica que abarca mensajes, audiencia y propuesta de valor. Aquí están las 5 señales más comunes que indican que tu marca necesita evolucionar para seguir siendo relevante en el mercado LATAM.',
+  },
+  {
+    title: 'El framework de Growth para multinacionales en LATAM',
+    excerpt: 'Un sistema probado para acelerar el crecimiento en mercados latinoamericanos complejos.',
+    content: 'Las multinacionales que ingresan a LATAM enfrentan desafíos únicos: fragmentación cultural, regulaciones diversas y dinámicas competitivas locales. Este framework de 4 pilares te permite navegar la complejidad mientras escalas de manera sostenible.',
+  },
+  {
+    title: 'De CMO a Board: construyendo influencia estratégica',
+    excerpt: 'Cómo los líderes de marketing pueden posicionarse como partners estratégicos del C-suite.',
+    content: 'El rol del CMO está evolucionando. Ya no basta con dominar campañas y métricas de awareness. Los líderes de marketing que trascienden construyen narrativas de negocio, conectan brand equity con revenue, y se posicionan como pensadores estratégicos ante el board.',
+  },
+];
+---
+
+<section class="contenido" id="contenido-module">
+  <div class="contenido__container">
+    <!-- Video Insights Section -->
+    <div class="contenido__section">
+      <h2 class="contenido__heading" data-i18n="content.section.videos">
+        Video Insights
+      </h2>
+      <div class="contenido__video-grid">
+        {videos.map((video) => (
+          <VideoCard
+            thumbnail={video.thumbnail}
+            title={video.title}
+            duration={video.duration}
+            topic={video.topic}
+            videoUrl={video.videoUrl}
+          />
+        ))}
+      </div>
+    </div>
+
+    <!-- Micro-Articles Section -->
+    <div class="contenido__section">
+      <h2 class="contenido__heading" data-i18n="content.section.articles">
+        Micro-Articles
+      </h2>
+      <div class="contenido__article-grid">
+        {articles.map((article) => (
+          <ArticleCard
+            title={article.title}
+            excerpt={article.excerpt}
+            content={article.content}
+          />
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <!-- Single reusable VideoModal instance -->
+  <VideoModal />
+
+  <!-- Article modal for expanded article content -->
+  <div id="article-modal" class="video-modal" hidden>
+    <div class="video-modal__overlay" data-article-modal-overlay></div>
+    <div
+      class="video-modal__container"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Article"
+    >
+      <button
+        class="video-modal__close"
+        type="button"
+        aria-label="Close"
+        data-article-modal-close
+      >
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <div class="article-modal__content" data-article-modal-content>
+        <!-- Article text injected dynamically via JS -->
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .contenido {
+    padding: var(--diana-space-xl) 0;
+  }
+
+  .contenido__container {
+    max-width: var(--diana-max-width);
+    margin: 0 auto;
+    padding-inline: var(--diana-space-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--diana-space-xl);
+  }
+
+  .contenido__section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--diana-space-lg);
+  }
+
+  .contenido__heading {
+    font-family: var(--diana-font-heading);
+    font-size: 1.5rem;
+    color: var(--diana-text);
+    margin: 0;
+  }
+
+  /* Video grid: 1 column mobile, 2 columns >=769px */
+  .contenido__video-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--diana-space-lg);
+  }
+
+  @media (min-width: 769px) {
+    .contenido__video-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  /* Article grid: 1 column mobile, 2 columns >=769px, 3 columns >=1024px */
+  .contenido__article-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--diana-space-lg);
+  }
+
+  @media (min-width: 769px) {
+    .contenido__article-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .contenido__article-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  /* Article modal content styling */
+  .article-modal__content {
+    background: var(--diana-surface);
+    border-radius: 8px;
+    padding: var(--diana-space-lg);
+    color: var(--diana-text);
+    font-family: var(--diana-font-body);
+    font-size: 1rem;
+    line-height: 1.6;
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+</style>
+
+<script>
+  /**
+   * ContenidoModule client-side script
+   * Handles VideoModal and ArticleModal interactions:
+   * - Open/close modals
+   * - Focus trapping
+   * - Video stop on close (iframe removal)
+   * - 10s iframe load timeout
+   */
+  (function () {
+    // --- DOM references ---
+    const videoModal = document.getElementById('video-modal') as HTMLElement | null;
+    const videoOverlay = document.querySelector('[data-video-modal-overlay]') as HTMLElement | null;
+    const videoCloseBtn = document.querySelector('[data-video-modal-close]') as HTMLButtonElement | null;
+    const videoIframeContainer = document.querySelector('[data-video-modal-iframe-container]') as HTMLElement | null;
+    const videoError = document.querySelector('[data-video-modal-error]') as HTMLElement | null;
+
+    const articleModal = document.getElementById('article-modal') as HTMLElement | null;
+    const articleOverlay = document.querySelector('[data-article-modal-overlay]') as HTMLElement | null;
+    const articleCloseBtn = document.querySelector('[data-article-modal-close]') as HTMLButtonElement | null;
+    const articleContent = document.querySelector('[data-article-modal-content]') as HTMLElement | null;
+
+    // --- State ---
+    let videoTrigger: HTMLElement | null = null;
+    let articleTrigger: HTMLElement | null = null;
+    let loadTimeout: ReturnType<typeof setTimeout> | null = null;
+
+    // --- Focus Trap Utility ---
+    function getFocusableElements(container: HTMLElement): HTMLElement[] {
+      const selectors = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+      return Array.from(container.querySelectorAll<HTMLElement>(selectors)).filter(
+        (el) => !el.hasAttribute('hidden') && el.offsetParent !== null
+      );
+    }
+
+    function trapFocus(event: KeyboardEvent, container: HTMLElement): void {
+      if (event.key !== 'Tab') return;
+
+      const focusable = getFocusableElements(container);
+      if (focusable.length === 0) return;
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (event.shiftKey) {
+        if (document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        }
+      } else {
+        if (document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
+      }
+    }
+
+    // --- Video Modal Logic ---
+    function openVideoModal(videoUrl: string, trigger: HTMLElement): void {
+      if (!videoModal || !videoIframeContainer || !videoError) return;
+
+      videoTrigger = trigger;
+
+      // Clear previous state
+      videoIframeContainer.innerHTML = '';
+      videoError.hidden = true;
+
+      // Create iframe
+      const iframe = document.createElement('iframe');
+      iframe.src = videoUrl;
+      iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
+      iframe.setAttribute('allowfullscreen', '');
+      iframe.setAttribute('title', 'Video player');
+
+      // 10s timeout — if iframe doesn't load, show error
+      loadTimeout = setTimeout(() => {
+        iframe.style.display = 'none';
+        videoError.hidden = false;
+      }, 10000);
+
+      iframe.addEventListener('load', () => {
+        if (loadTimeout) {
+          clearTimeout(loadTimeout);
+          loadTimeout = null;
+        }
+      });
+
+      videoIframeContainer.appendChild(iframe);
+
+      // Show modal
+      videoModal.hidden = false;
+
+      // Move focus to close button
+      if (videoCloseBtn) {
+        videoCloseBtn.focus();
+      }
+    }
+
+    function closeVideoModal(): void {
+      if (!videoModal || !videoIframeContainer) return;
+
+      // Clear timeout
+      if (loadTimeout) {
+        clearTimeout(loadTimeout);
+        loadTimeout = null;
+      }
+
+      // Remove iframe (stops video playback)
+      videoIframeContainer.innerHTML = '';
+
+      // Hide error
+      if (videoError) {
+        videoError.hidden = true;
+      }
+
+      // Hide modal
+      videoModal.hidden = true;
+
+      // Return focus to trigger
+      if (videoTrigger) {
+        videoTrigger.focus();
+        videoTrigger = null;
+      }
+    }
+
+    // --- Article Modal Logic ---
+    function openArticleModal(content: string, trigger: HTMLElement): void {
+      if (!articleModal || !articleContent) return;
+
+      articleTrigger = trigger;
+
+      // Set content
+      articleContent.textContent = content;
+
+      // Show modal
+      articleModal.hidden = false;
+
+      // Move focus to close button
+      if (articleCloseBtn) {
+        articleCloseBtn.focus();
+      }
+    }
+
+    function closeArticleModal(): void {
+      if (!articleModal || !articleContent) return;
+
+      // Clear content
+      articleContent.textContent = '';
+
+      // Hide modal
+      articleModal.hidden = true;
+
+      // Return focus to trigger
+      if (articleTrigger) {
+        articleTrigger.focus();
+        articleTrigger = null;
+      }
+    }
+
+    // --- Event Listeners ---
+
+    // Video card clicks
+    document.querySelectorAll<HTMLButtonElement>('.video-card[data-video-url]').forEach((card) => {
+      card.addEventListener('click', () => {
+        const url = card.getAttribute('data-video-url');
+        if (url) {
+          openVideoModal(url, card);
+        }
+      });
+    });
+
+    // Article card clicks
+    document.querySelectorAll<HTMLButtonElement>('.article-card[data-article-content]').forEach((card) => {
+      card.addEventListener('click', () => {
+        const content = card.getAttribute('data-article-content');
+        if (content) {
+          openArticleModal(content, card);
+        }
+      });
+    });
+
+    // Video modal close handlers
+    if (videoCloseBtn) {
+      videoCloseBtn.addEventListener('click', closeVideoModal);
+    }
+    if (videoOverlay) {
+      videoOverlay.addEventListener('click', closeVideoModal);
+    }
+
+    // Article modal close handlers
+    if (articleCloseBtn) {
+      articleCloseBtn.addEventListener('click', closeArticleModal);
+    }
+    if (articleOverlay) {
+      articleOverlay.addEventListener('click', closeArticleModal);
+    }
+
+    // Escape key — close any open modal
+    document.addEventListener('keydown', (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        if (videoModal && !videoModal.hidden) {
+          closeVideoModal();
+        }
+        if (articleModal && !articleModal.hidden) {
+          closeArticleModal();
+        }
+      }
+    });
+
+    // Focus trap for video modal
+    if (videoModal) {
+      videoModal.addEventListener('keydown', (event: KeyboardEvent) => {
+        const container = videoModal.querySelector('[role="dialog"]') as HTMLElement | null;
+        if (container) {
+          trapFocus(event, container);
+        }
+      });
+    }
+
+    // Focus trap for article modal
+    if (articleModal) {
+      articleModal.addEventListener('keydown', (event: KeyboardEvent) => {
+        const container = articleModal.querySelector('[role="dialog"]') as HTMLElement | null;
+        if (container) {
+          trapFocus(event, container);
+        }
+      });
+    }
+  })();
+</script>

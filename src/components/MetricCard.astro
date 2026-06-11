@@ -1,0 +1,46 @@
+---
+/**
+ * MetricCard.astro
+ * Displays a numeric metric value prominently with a descriptive label below.
+ * Used in the Validación module to showcase growth results.
+ */
+interface Props {
+  value: string;
+  labelKey: string;
+}
+
+const { value, labelKey } = Astro.props;
+---
+
+<article class="metric-card">
+  <span class="metric-value">{value}</span>
+  <span class="metric-label" data-i18n={labelKey}>{labelKey}</span>
+</article>
+
+<style>
+  .metric-card {
+    background: var(--diana-surface);
+    border-radius: 12px;
+    padding: var(--diana-space-lg);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--diana-space-sm);
+  }
+
+  .metric-value {
+    font-family: var(--diana-font-heading);
+    font-size: 3rem;
+    font-weight: bold;
+    color: var(--diana-accent-lime);
+    line-height: 1.1;
+  }
+
+  .metric-label {
+    font-family: var(--diana-font-body);
+    font-size: 0.875rem;
+    color: var(--diana-text-muted);
+    line-height: 1.4;
+  }
+</style>

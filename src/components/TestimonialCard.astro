@@ -1,0 +1,75 @@
+---
+/**
+ * TestimonialCard.astro
+ * Displays an executive testimonial with quote in Fraunces italic,
+ * author name, role (CEO/COO/CFO), and company.
+ * Used in the Validación module to showcase client endorsements.
+ */
+interface Props {
+  quoteKey: string;
+  author: string;
+  role: string;
+  company: string;
+}
+
+const { quoteKey, author, role, company } = Astro.props;
+---
+
+<article class="testimonial-card">
+  <blockquote class="testimonial-quote" data-i18n={quoteKey}>
+    {quoteKey}
+  </blockquote>
+  <footer class="testimonial-author">
+    <span class="author-name">{author}</span>
+    <span class="author-detail">{role}, {company}</span>
+  </footer>
+</article>
+
+<style>
+  .testimonial-card {
+    background: var(--diana-surface);
+    border-radius: 12px;
+    padding: var(--diana-space-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--diana-space-md);
+  }
+
+  .testimonial-quote {
+    font-family: var(--diana-font-quote);
+    font-style: italic;
+    font-size: 1.125rem;
+    color: var(--diana-text);
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    border: none;
+  }
+
+  .testimonial-quote::before {
+    content: "\201C";
+  }
+
+  .testimonial-quote::after {
+    content: "\201D";
+  }
+
+  .testimonial-author {
+    display: flex;
+    flex-direction: column;
+    gap: var(--diana-space-xs);
+  }
+
+  .author-name {
+    font-family: var(--diana-font-body);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--diana-text);
+  }
+
+  .author-detail {
+    font-family: var(--diana-font-body);
+    font-size: 0.875rem;
+    color: var(--diana-text-muted);
+  }
+</style>

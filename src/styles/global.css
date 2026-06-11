@@ -1,0 +1,100 @@
+:root {
+  /* Colors */
+  --diana-bg: #060608;
+  --diana-surface: #0e0e14;
+  --diana-accent-lime: #ccff00;
+  --diana-accent-orange: #ff5015;
+  --diana-text: #f8f9fa;
+  --diana-text-muted: #b3b0ba;
+
+  /* Typography */
+  --diana-font-heading: 'Archivo Black', sans-serif;
+  --diana-font-quote: 'Fraunces', serif;
+  --diana-font-body: 'Archivo', sans-serif;
+
+  /* Spacing */
+  --diana-space-xs: 0.25rem;
+  --diana-space-sm: 0.5rem;
+  --diana-space-md: 1rem;
+  --diana-space-lg: 2rem;
+  --diana-space-xl: 4rem;
+
+  /* Transitions */
+  --diana-transition-fast: 150ms ease;
+  --diana-transition-normal: 300ms ease;
+
+  /* Layout */
+  --diana-max-width: 1200px;
+  --diana-tab-bar-height: 64px;
+}
+
+/* ==========================================================================
+   CSS Reset
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ==========================================================================
+   Base Styles (Mobile-first)
+   ========================================================================== */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--diana-bg);
+  color: var(--diana-text);
+  font-family: var(--diana-font-body);
+  line-height: 1.6;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* ==========================================================================
+   Utility Classes
+   ========================================================================== */
+
+.container {
+  max-width: var(--diana-max-width);
+  margin: 0 auto;
+  padding-inline: var(--diana-space-md);
+}
+
+/* ==========================================================================
+   Accessibility Utilities
+   ========================================================================== */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+:focus-visible {
+  outline: 2px solid var(--diana-accent-lime);
+  outline-offset: 2px;
+}
+
+button,
+[role="tab"],
+[role="radio"],
+a {
+  min-height: 44px;
+  min-width: 44px;
+}

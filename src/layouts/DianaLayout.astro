@@ -1,0 +1,49 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+  lang?: 'en' | 'es';
+}
+
+const { title, description, lang = 'es' } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang={lang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+
+    <!-- Preconnect to Google Fonts origins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- Google Fonts: Archivo Black, Archivo 400/500, Fraunces italic -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@400;500&family=Fraunces:ital@1&display=swap"
+      rel="stylesheet"
+    />
+
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>
+
+<script>
+  import { getCurrentLanguage, applyTranslations } from '../utils/i18nEngine';
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const lang = getCurrentLanguage();
+    applyTranslations(lang);
+  });
+</script>
